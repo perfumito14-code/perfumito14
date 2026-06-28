@@ -18,10 +18,10 @@ export function ProductGrid({ productos }: { productos: Producto[] }) {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-x-5 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
       {productos.map((producto, i) => (
         <Reveal key={producto.id} delay={(i % 3) * 0.08}>
-          <ProductCard producto={producto} />
+          <ProductCard producto={producto} index={i} />
         </Reveal>
       ))}
     </div>
