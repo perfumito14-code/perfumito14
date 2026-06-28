@@ -9,7 +9,7 @@ import { formatearPrecio } from '@/lib/format'
  * Puede sobreescribirse con la variable de entorno NEXT_PUBLIC_WHATSAPP_NUMBER.
  */
 export const WHATSAPP_NUMERO =
-  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '34600000000'
+  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '34637746490'
 
 /**
  * Construye el texto del pedido, ya formateado y legible.
@@ -26,7 +26,7 @@ export function construirMensajePedido(
   })
 
   return [
-    'Hola, quiero hacer este pedido en Aurélio:',
+    'Hola, quiero hacer este pedido en perfumito14:',
     '',
     ...lineas,
     '',

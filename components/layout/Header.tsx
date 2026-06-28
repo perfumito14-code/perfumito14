@@ -64,13 +64,13 @@ export function Header() {
         <Link
           href="/"
           className="flex flex-1 flex-col items-center justify-center md:flex-none"
-          aria-label="Aurélio, inicio"
+          aria-label="perfumito14, inicio"
         >
           <span className="font-serif text-2xl font-semibold leading-none tracking-[0.22em] text-foreground md:text-[1.7rem]">
-            AURÉLIO
+            PERFUMITO14
           </span>
           <span className="mt-1 hidden text-[0.6rem] uppercase tracking-[0.4em] text-muted-foreground md:block">
-            Profumi d&apos;autore
+            Perfumes italianos premium
           </span>
         </Link>
 
@@ -116,7 +116,7 @@ export function Header() {
           >
             <div className="flex h-16 items-center justify-between px-5">
               <span className="font-serif text-xl font-semibold tracking-[0.22em]">
-                AURÉLIO
+                PERFUMITO14
               </span>
               <button
                 type="button"

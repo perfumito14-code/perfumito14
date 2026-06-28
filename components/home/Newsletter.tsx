@@ -22,7 +22,7 @@ export function Newsletter() {
       <div className="mx-auto max-w-2xl px-5 text-center md:px-8">
         <Reveal>
           <span className="text-xs font-medium uppercase tracking-[0.3em] text-gold">
-            Círculo Aurélio
+            Círculo perfumito14
           </span>
           <h2 className="mt-4 text-balance font-serif text-4xl leading-tight text-foreground md:text-5xl">
             Recibe nuestras novedades
@@ -63,7 +63,7 @@ export function Newsletter() {
           </form>
           {enviado && (
             <p className="mt-4 text-sm text-muted-foreground">
-              Gracias por unirte al círculo Aurélio.
+              Gracias por unirte al círculo perfumito14.
             </p>
           )}
         </Reveal>

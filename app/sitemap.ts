@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { productos } from '@/data/products'
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://aurelio.example'
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://perfumito14.vercel.app'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const productosEntries = productos.map((p) => ({

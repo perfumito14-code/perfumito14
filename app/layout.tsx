@@ -19,25 +19,24 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://maison-aurelio.example'),
+  metadataBase: new URL('https://perfumito14.vercel.app'),
   title: {
-    default: 'Aurélio · Perfumería italiana de autor',
-    template: '%s · Aurélio',
+    default: 'perfumito14 · Perfumes italianos premium',
+    template: '%s · perfumito14',
   },
   description:
-    'Fragancias italianas de nicho, compuestas a mano con materias primas nobles. Disponibles en 30ml y 50ml. Tu pedido se confirma de forma personal por WhatsApp.',
+    'Perfumes italianos premium. Fragancias de nicho importadas directamente desde Italia. Tu pedido se confirma de forma personal por WhatsApp.',
   keywords: [
     'perfume italiano',
     'perfumería de nicho',
     'fragancias artesanales',
-    'eau de parfum',
-    'Aurélio',
+    'perfumes italianos premium',
+    'perfumito14',
   ],
-  generator: 'v0.app',
   openGraph: {
-    title: 'Aurélio · Perfumería italiana de autor',
+    title: 'perfumito14 · Perfumes italianos premium',
     description:
-      'Fragancias italianas de nicho compuestas a mano. 30ml y 50ml. Pedido por WhatsApp.',
+      'Perfumes italianos premium importados desde Italia. Pedido por WhatsApp.',
     type: 'website',
     locale: 'es_ES',
   },

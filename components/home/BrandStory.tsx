@@ -23,34 +23,28 @@ export function BrandStory() {
               Nuestra historia
             </span>
             <h2 className="mt-5 text-balance font-serif text-4xl leading-tight text-foreground md:text-5xl">
-              Tres generaciones componiendo emociones
+              Perfumes italianos con alma artesanal
             </h2>
             <div className="mt-7 space-y-5 text-pretty leading-relaxed text-muted-foreground">
               <p>
-                Nacida en un pequeño atelier de la Toscana, Aurélio mantiene
-                viva la tradición de la alta perfumería italiana. Cada fragancia
-                comienza en el campo: flores recogidas al amanecer, cítricos
-                madurados al sol y maderas seleccionadas una a una.
+                perfumito14 nace de la pasión por la alta perfumería italiana.
+                Seleccionamos personalmente cada fragancia directamente desde
+                los mejores talleres artesanales de Italia, garantizando calidad
+                y autenticidad en cada frasco.
               </p>
               <p>
-                No buscamos la producción en masa, sino el detalle. Nuestras
-                composiciones se elaboran en pequeños lotes, dejando reposar las
-                esencias el tiempo necesario para que cada nota encuentre su
-                lugar.
+                Creemos en el detalle, en las materias primas nobles y en los
+                procesos tradicionales. Cada perfume que ofrecemos ha sido
+                elegido por su carácter único, su estela y su capacidad de
+                contar una historia.
               </p>
               <p>
-                El resultado son perfumes con alma, pensados para quien entiende
-                el aroma como una forma de memoria y de identidad.
+                Nuestra misión es acercarte la excelencia de la perfumería
+                italiana premium a un solo clic, con un trato personal y cercano.
               </p>
             </div>
 
             <div className="mt-10 flex gap-10">
-              <div>
-                <p className="font-serif text-3xl text-primary">62</p>
-                <p className="mt-1 text-xs uppercase tracking-[0.16em] text-muted-foreground">
-                  Años de oficio
-                </p>
-              </div>
               <div>
                 <p className="font-serif text-3xl text-primary">100%</p>
                 <p className="mt-1 text-xs uppercase tracking-[0.16em] text-muted-foreground">
@@ -58,9 +52,15 @@ export function BrandStory() {
                 </p>
               </div>
               <div>
-                <p className="font-serif text-3xl text-primary">Petit</p>
+                <p className="font-serif text-3xl text-primary">Premium</p>
                 <p className="mt-1 text-xs uppercase tracking-[0.16em] text-muted-foreground">
-                  Lotes pequeños
+                  Calidad seleccionada
+                </p>
+              </div>
+              <div>
+                <p className="font-serif text-3xl text-primary">Directo</p>
+                <p className="mt-1 text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                  Importación directa
                 </p>
               </div>
             </div>

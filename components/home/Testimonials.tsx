@@ -33,7 +33,7 @@ export function Testimonials() {
               Voces de nuestros clientes
             </span>
             <h2 className="mt-4 text-balance font-serif text-4xl leading-tight text-foreground md:text-5xl">
-              Lo que cuentan de Aurélio
+              Lo que cuentan de perfumito14
             </h2>
           </div>
         </Reveal>

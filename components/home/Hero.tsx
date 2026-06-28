@@ -11,7 +11,7 @@ export function Hero() {
       {/* Imagen de fondo */}
       <Image
         src="/images/hero.png"
-        alt="Frasco de perfume Aurélio en composición editorial sobre mármol y botánicos"
+        alt="Frasco de perfume perfumito14 en composición editorial sobre mármol y botánicos"
         fill
         priority
         sizes="100vw"
@@ -28,7 +28,7 @@ export function Hero() {
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           className="text-xs font-medium uppercase tracking-[0.4em] text-background/90"
         >
-          Profumi d&apos;autore · dal 1962
+          Perfumes italianos premium
         </motion.span>
 
         <motion.h1
@@ -37,7 +37,7 @@ export function Hero() {
           transition={{ duration: 0.9, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           className="mt-6 text-balance font-serif text-5xl font-medium leading-[1.05] text-background md:text-7xl"
         >
-          El arte italiano de la fragancia
+          La esencia de Italia en cada fragancia
         </motion.h1>
 
         <motion.p
@@ -46,8 +46,8 @@ export function Hero() {
           transition={{ duration: 0.9, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
           className="mt-6 max-w-xl text-pretty text-base leading-relaxed text-background/85 md:text-lg"
         >
-          Composiciones de nicho elaboradas a mano con materias primas nobles.
-          Disponibles en formatos de 30ml y 50ml, para acompañar cada momento.
+          Fragancias italianas premium importadas directamente desde Italia.
+          Disponibles en formatos de 30ml y 50ml. Tu pedido se confirma por WhatsApp.
         </motion.p>
 
         <motion.div

@@ -5,7 +5,7 @@ import { CatalogView } from '@/components/catalog/CatalogView'
 export const metadata: Metadata = {
   title: 'Catálogo',
   description:
-    'Descubre toda la colección de fragancias italianas de nicho Aurélio. Filtra por familia olfativa y formato (30ml / 50ml).',
+    'Descubre toda la colección de perfumes italianos premium perfumito14. Filtra por familia olfativa y formato (30ml / 50ml).',
 }
 
 export default function CatalogoPage() {

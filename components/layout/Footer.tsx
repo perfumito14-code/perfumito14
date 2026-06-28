@@ -35,12 +35,12 @@ export function Footer() {
           {/* Marca */}
           <div>
             <span className="font-serif text-3xl font-semibold tracking-[0.18em]">
-              AURÉLIO
+              PERFUMITO14
             </span>
             <p className="mt-5 max-w-sm text-pretty leading-relaxed text-muted-foreground">
-              Perfumería italiana de autor. Composiciones a mano con materias
-              primas nobles, pensadas para quien entiende la fragancia como una
-              forma de memoria.
+              Perfumes italianos premium importados directamente desde Italia.
+              Fragancias de nicho seleccionadas para quienes buscan distinción
+              y calidad artesanal.
             </p>
           </div>
 
@@ -102,35 +102,35 @@ export function Footer() {
               <li className="flex items-center gap-3">
                 <Mail className="size-4 text-gold" />
                 <a
-                  href="mailto:ciao@aurelio.example"
+                  href="mailto:info@perfumito14.com"
                   className="transition-colors hover:text-primary"
                 >
-                  ciao@aurelio.example
+                  info@perfumito14.com
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <InstagramIcon className="size-4 text-gold" />
                 <a
-                  href="#"
+                  href="https://www.instagram.com/perfumito_14?igsh=MWRkbm12N2M0Y2VoZg%3D%3D"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="transition-colors hover:text-primary"
                 >
-                  @aurelio.profumi
+                  @perfumito_14
                 </a>
               </li>
               <li className="flex items-start gap-3">
                 <MapPin className="mt-0.5 size-4 text-gold" />
-                <span>Via delle Essenze, 12 — Firenze, Italia</span>
+                <span>Envíos desde Italia a toda España</span>
               </li>
             </ul>
           </div>
         </div>
 
         <div className="mt-16 flex flex-col gap-4 border-t border-border pt-8 text-xs text-muted-foreground md:flex-row md:items-center md:justify-between">
-          <p>© {year} Aurélio Profumi. Todos los derechos reservados.</p>
+          <p>© {year} perfumito14. Todos los derechos reservados.</p>
           <p className="max-w-xl text-pretty">
-            Catálogo de demostración con productos ficticios. Los nombres y
-            fragancias mostrados son orientativos y serán sustituidos por el
-            catálogo real del proveedor.
+            Perfumes italianos premium importados directamente desde Italia.
           </p>
         </div>
       </div>
