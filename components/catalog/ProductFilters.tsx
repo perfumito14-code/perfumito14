@@ -1,15 +1,15 @@
 'use client'
 
-import { FAMILIAS, type FamiliaOlfativa, type Tamano } from '@/types/product'
+import type { FamiliaOlfativa } from '@/types/product'
+import { FAMILIAS } from '@/types/product'
 import { cn } from '@/lib/utils'
-
-const TAMANOS: Tamano[] = ['30ml', '50ml']
 
 interface Props {
   familiasActivas: FamiliaOlfativa[]
-  tamanosActivos: Tamano[]
+  tamanosActivos: string[]
+  volumesDisponibles: string[]
   onToggleFamilia: (f: FamiliaOlfativa) => void
-  onToggleTamano: (t: Tamano) => void
+  onToggleTamano: (t: string) => void
   onLimpiar: () => void
   totalActivos: number
 }
@@ -17,6 +17,7 @@ interface Props {
 export function ProductFilters({
   familiasActivas,
   tamanosActivos,
+  volumesDisponibles,
   onToggleFamilia,
   onToggleTamano,
   onLimpiar,
@@ -66,32 +67,34 @@ export function ProductFilters({
         </div>
       </fieldset>
 
-      <fieldset>
-        <legend className="mb-4 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-          Formato
-        </legend>
-        <div className="flex flex-wrap gap-2">
-          {TAMANOS.map((t) => {
-            const activo = tamanosActivos.includes(t)
-            return (
-              <button
-                key={t}
-                type="button"
-                onClick={() => onToggleTamano(t)}
-                aria-pressed={activo}
-                className={cn(
-                  'rounded-sm border px-4 py-2 text-xs font-medium tracking-wide transition-colors',
-                  activo
-                    ? 'border-primary bg-primary text-primary-foreground'
-                    : 'border-border bg-background text-foreground hover:border-primary/50',
-                )}
-              >
-                {t}
-              </button>
-            )
-          })}
-        </div>
-      </fieldset>
+      {volumesDisponibles.length > 0 && (
+        <fieldset>
+          <legend className="mb-4 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+            Formato
+          </legend>
+          <div className="flex flex-wrap gap-2">
+            {volumesDisponibles.map((t) => {
+              const activo = tamanosActivos.includes(t)
+              return (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => onToggleTamano(t)}
+                  aria-pressed={activo}
+                  className={cn(
+                    'rounded-sm border px-4 py-2 text-xs font-medium tracking-wide transition-colors',
+                    activo
+                      ? 'border-primary bg-primary text-primary-foreground'
+                      : 'border-border bg-background text-foreground hover:border-primary/50',
+                  )}
+                >
+                  {t}
+                </button>
+              )
+            })}
+          </div>
+        </fieldset>
+      )}
     </div>
   )
 }

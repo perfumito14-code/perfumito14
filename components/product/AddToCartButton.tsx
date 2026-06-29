@@ -1,12 +1,12 @@
 'use client'
 
 import { ShoppingBag } from 'lucide-react'
-import type { Producto, Tamano } from '@/types/product'
+import type { Producto } from '@/types/product'
 import { useCarrito } from '@/lib/cartStore'
 
 interface Props {
   producto: Producto
-  tamano: Tamano
+  tamano: string
 }
 
 export function AddToCartButton({ producto, tamano }: Props) {

@@ -38,9 +38,8 @@ export function Footer() {
               PERFUMITO14
             </span>
             <p className="mt-5 max-w-sm text-pretty leading-relaxed text-muted-foreground">
-              Perfumes italianos premium importados directamente desde Italia.
-              Fragancias de nicho seleccionadas para quienes buscan distinción
-              y calidad artesanal.
+              Versace, Dior, YSL, Carolina Herrera, Paco Rabanne. Originales en
+              5ml y 10ml. Pide por WhatsApp y recíbelo en casa.
             </p>
           </div>
 

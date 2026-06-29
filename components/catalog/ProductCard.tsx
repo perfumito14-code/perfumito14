@@ -7,24 +7,20 @@ import type { Producto } from '@/types/product'
 import { useCarrito } from '@/lib/cartStore'
 import { formatearPrecio, precioDesde } from '@/lib/format'
 
-const ROTATIONS = ['-rotate-1', 'rotate-1', '-rotate-[0.5deg]', 'rotate-[1.5deg]']
-
 export function ProductCard({ producto, index = 0 }: { producto: Producto; index?: number }) {
   const agregar = useCarrito((s) => s.agregar)
   const desde = precioDesde(producto.variantes.map((v) => v.precio))
-  const variante30 = producto.variantes.find((v) => v.tamano === '30ml')
-  const badgeRotation = ROTATIONS[index % ROTATIONS.length]
+  const primerVariante = producto.variantes[0]
+  const volumes = producto.variantes.map((v) => v.tamano).join(' · ')
 
   const quickAdd = (e: React.MouseEvent) => {
     e.preventDefault()
-    if (variante30) agregar(producto, '30ml')
+    if (primerVariante) agregar(producto, primerVariante.tamano)
   }
 
   return (
-    <article className="group relative flex flex-col border-2 border-black bg-white transition-all duration-150 hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_#000]">
+    <article className="group relative flex flex-col rounded-sm border border-border bg-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
       <Link href={`/producto/${producto.slug}`} className="flex flex-col">
-
-        {/* Imagen */}
         <div className="relative aspect-[3/4] overflow-hidden bg-stone-100">
           <Image
             src={producto.imagenes[0] || '/placeholder.svg'}
@@ -34,57 +30,49 @@ export function ProductCard({ producto, index = 0 }: { producto: Producto; index
             className="object-cover transition-all duration-500 group-hover:scale-105"
           />
 
-          {/* Stock limitado — sticker rotado */}
-          <div className={`absolute -right-2 top-5 ${badgeRotation} bg-red-600 px-2.5 py-1 shadow-sm`}>
-            <span className="text-[0.55rem] font-black uppercase tracking-[0.2em] text-white">
-              stock limitado
-            </span>
-          </div>
-
-          {/* Nuevo */}
           {producto.nuevoLanzamiento && (
-            <div className="absolute left-0 top-4 bg-black px-3 py-1">
-              <span className="text-[0.6rem] font-black uppercase tracking-[0.2em] text-white">
+            <div className="absolute left-0 top-4 px-3 py-1"
+              style={{ background: '#dc70af' }}
+            >
+              <span className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-white">
                 ★ nuevo
               </span>
             </div>
           )}
 
-          {/* Quick add — visible siempre en mobile, hover en desktop */}
-          {variante30 && (
+          {primerVariante && (
             <button
               type="button"
               onClick={quickAdd}
-              className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-2 bg-black py-3 text-[0.6rem] font-black uppercase tracking-[0.2em] text-white opacity-0 transition-all duration-200 group-hover:opacity-100 max-md:opacity-100"
-              aria-label={`Añadir ${producto.nombre} 30ml al pedido`}
+              className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-2 py-3 text-[0.6rem] font-bold uppercase tracking-[0.2em] text-white opacity-0 transition-all duration-200 hover:opacity-90 max-md:opacity-100"
+              style={{ background: '#dc70af' }}
+              aria-label={`Añadir ${producto.nombre} al pedido`}
             >
               <Plus className="size-3.5" />
-              Añadir 30ml
+              Añadir rápido
             </button>
           )}
         </div>
 
-        {/* Info */}
-        <div className="flex flex-col gap-1 border-t-2 border-black p-3">
-          <span className="text-[0.55rem] font-black uppercase tracking-[0.25em] text-stone-400">
-            {producto.familiaOlfativa}
+        <div className="flex flex-col gap-1 p-4">
+          <span className="text-[0.55rem] font-medium uppercase tracking-[0.25em] text-muted-foreground">
+            {producto.casaPerfumeria}
           </span>
-          <h3 className="font-serif text-base font-bold leading-tight text-black">
+          <h3 className="font-serif text-base font-semibold leading-tight text-foreground">
             {producto.nombre}
           </h3>
-          <p className="line-clamp-1 text-xs text-stone-500">
+          <p className="line-clamp-1 text-xs text-muted-foreground">
             {producto.descripcionCorta}
           </p>
           <div className="mt-1 flex items-center justify-between">
-            <span className="text-sm font-black text-black">
+            <span className="text-sm font-semibold text-foreground">
               desde {formatearPrecio(desde)}
             </span>
-            <span className="text-[0.55rem] font-bold uppercase tracking-wider text-stone-400">
-              30 · 50 ml
+            <span className="text-[0.55rem] font-medium uppercase tracking-wider text-muted-foreground">
+              {volumes}
             </span>
           </div>
         </div>
-
       </Link>
     </article>
   )

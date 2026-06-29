@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 const NAV = [
   { href: '/admin', label: 'Productos', exact: true },
   { href: '/admin/productos/nuevo', label: 'Nuevo producto', exact: false },
+  { href: '/admin/hero', label: 'Hero', exact: true },
   { href: '/admin/categorias', label: 'Familias olfativas', exact: true },
   { href: '/admin/envios', label: 'Envíos', exact: true },
 ]

@@ -3,21 +3,26 @@
 import { useMemo, useState } from 'react'
 import { SlidersHorizontal, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
-import type { FamiliaOlfativa, Producto, Tamano } from '@/types/product'
+import type { FamiliaOlfativa, Producto } from '@/types/product'
 import { ProductFilters } from '@/components/catalog/ProductFilters'
 import { ProductGrid } from '@/components/catalog/ProductGrid'
 
 export function CatalogView({ productos }: { productos: Producto[] }) {
   const [familias, setFamilias] = useState<FamiliaOlfativa[]>([])
-  const [tamanos, setTamanos] = useState<Tamano[]>([])
+  const [tamanos, setTamanos] = useState<string[]>([])
   const [filtrosMovil, setFiltrosMovil] = useState(false)
+
+  const volumesDisponibles = useMemo(
+    () => [...new Set(productos.flatMap((p) => p.variantes.map((v) => v.tamano)))],
+    [productos],
+  )
 
   const toggleFamilia = (f: FamiliaOlfativa) =>
     setFamilias((prev) =>
       prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f],
     )
 
-  const toggleTamano = (t: Tamano) =>
+  const toggleTamano = (t: string) =>
     setTamanos((prev) =>
       prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t],
     )
@@ -42,7 +47,6 @@ export function CatalogView({ productos }: { productos: Producto[] }) {
 
   return (
     <div className="mx-auto max-w-7xl px-5 py-12 md:px-8 md:py-16">
-      {/* Barra superior móvil */}
       <div className="mb-8 flex items-center justify-between lg:hidden">
         <p className="text-sm text-muted-foreground">
           {filtrados.length}{' '}
@@ -64,12 +68,12 @@ export function CatalogView({ productos }: { productos: Producto[] }) {
       </div>
 
       <div className="grid gap-12 lg:grid-cols-[240px_1fr]">
-        {/* Filtros laterales (desktop) */}
         <aside className="hidden lg:block">
           <div className="sticky top-28">
             <ProductFilters
               familiasActivas={familias}
               tamanosActivos={tamanos}
+              volumesDisponibles={volumesDisponibles}
               onToggleFamilia={toggleFamilia}
               onToggleTamano={toggleTamano}
               onLimpiar={limpiar}
@@ -78,7 +82,6 @@ export function CatalogView({ productos }: { productos: Producto[] }) {
           </div>
         </aside>
 
-        {/* Resultados */}
         <div>
           <p className="mb-8 hidden text-sm text-muted-foreground lg:block">
             {filtrados.length}{' '}
@@ -88,7 +91,6 @@ export function CatalogView({ productos }: { productos: Producto[] }) {
         </div>
       </div>
 
-      {/* Panel de filtros móvil */}
       <AnimatePresence>
         {filtrosMovil && (
           <>
@@ -119,6 +121,7 @@ export function CatalogView({ productos }: { productos: Producto[] }) {
               <ProductFilters
                 familiasActivas={familias}
                 tamanosActivos={tamanos}
+                volumesDisponibles={volumesDisponibles}
                 onToggleFamilia={toggleFamilia}
                 onToggleTamano={toggleTamano}
                 onLimpiar={limpiar}

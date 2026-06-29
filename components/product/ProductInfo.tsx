@@ -8,8 +8,8 @@ import { AddToCartButton } from '@/components/product/AddToCartButton'
 import { cn } from '@/lib/utils'
 
 export function ProductInfo({ producto }: { producto: Producto }) {
-  const [tamano, setTamano] = useState<Tamano>(
-    producto.variantes[0]?.tamano ?? '30ml',
+  const [tamano, setTamano] = useState<string>(
+    producto.variantes[0]?.tamano ?? '',
   )
   const variante =
     producto.variantes.find((v) => v.tamano === tamano) ?? producto.variantes[0]

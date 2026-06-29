@@ -6,7 +6,7 @@ export type FamiliaOlfativa =
   | 'acuatico'
   | 'gourmand'
 
-export type Tamano = '30ml' | '50ml'
+export type Tamano = string
 
 export interface Variante {
   tamano: Tamano
