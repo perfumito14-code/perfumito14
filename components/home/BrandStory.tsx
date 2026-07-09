@@ -12,7 +12,7 @@ export function BrandStory() {
             Perfumes originales,<br />sin pagar el frasco grande
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-pretty leading-relaxed text-muted-foreground">
-            Las mejores marcas en formatos de 5ml y 10ml. Directo desde Italia,
+            Las mejores marcas en formatos de 5ml, 7ml y 15ml. Directo desde Italia,
             con stock rotativo. Si lo ves, llévatelo.
           </p>
         </Reveal>
