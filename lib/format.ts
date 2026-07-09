@@ -9,10 +9,3 @@ export function formatearPrecio(valor: number): string {
     maximumFractionDigits: 2,
   }).format(valor)
 }
-
-/**
- * Devuelve el precio mínimo de un conjunto de variantes (para "Desde X€").
- */
-export function precioDesde(precios: number[]): number {
-  return Math.min(...precios)
-}

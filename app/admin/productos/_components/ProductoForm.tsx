@@ -3,11 +3,17 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { Plus, X } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { ImageUploader } from '@/components/admin/ImageUploader'
 import { NotesTagger } from '@/components/admin/NotesTagger'
 
 interface Categoria { id: string; nombre: string }
+
+interface VarianteForm {
+  ml: string
+  precio: string
+}
 
 interface FormData {
   nombre: string
@@ -19,8 +25,7 @@ interface FormData {
   descripcionCorta: string
   descripcionLarga: string
   imagenes: string[]
-  precio30ml: string
-  precio50ml: string
+  variantes: VarianteForm[]
   destacado: boolean
   nuevoLanzamiento: boolean
   activo: boolean
@@ -28,6 +33,8 @@ interface FormData {
 
 const slugify = (str: string) =>
   str.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+
+const emptyVariante = (): VarianteForm => ({ ml: '', precio: '' })
 
 const emptyForm = (): FormData => ({
   nombre: '',
@@ -39,8 +46,7 @@ const emptyForm = (): FormData => ({
   descripcionCorta: '',
   descripcionLarga: '',
   imagenes: [],
-  precio30ml: '',
-  precio50ml: '',
+  variantes: [emptyVariante()],
   destacado: false,
   nuevoLanzamiento: false,
   activo: true,
@@ -75,6 +81,7 @@ export function ProductoForm({ id }: { id?: string }) {
       .single()
       .then(({ data, error: err }) => {
         if (err || !data) { setError('No se pudo cargar el producto.'); setLoading(false); return }
+        const variantes: { ml: number; precio: number }[] = data.variantes ?? []
         setForm({
           nombre: data.nombre ?? '',
           casaPerfumeria: data.casa_perfumeria ?? '',
@@ -85,8 +92,12 @@ export function ProductoForm({ id }: { id?: string }) {
           descripcionCorta: data.descripcion_corta ?? '',
           descripcionLarga: data.descripcion_larga ?? '',
           imagenes: data.imagenes ?? [],
-          precio30ml: data.precio_30ml != null ? String(data.precio_30ml) : '',
-          precio50ml: data.precio_50ml != null ? String(data.precio_50ml) : '',
+          variantes: variantes.length > 0
+            ? variantes
+                .slice()
+                .sort((a, b) => a.ml - b.ml)
+                .map((v) => ({ ml: String(v.ml), precio: String(v.precio) }))
+            : [emptyVariante()],
           destacado: !!data.destacado,
           nuevoLanzamiento: !!data.nuevo_lanzamiento,
           activo: data.activo ?? true,
@@ -100,10 +111,27 @@ export function ProductoForm({ id }: { id?: string }) {
     if (fieldErrors[key]) setFieldErrors((prev) => { const next = { ...prev }; delete next[key]; return next })
   }
 
+  const setVariante = (index: number, key: keyof VarianteForm, value: string) => {
+    setForm((prev) => ({
+      ...prev,
+      variantes: prev.variantes.map((v, i) => (i === index ? { ...v, [key]: value } : v)),
+    }))
+    if (fieldErrors.variantes) setFieldErrors((prev) => { const next = { ...prev }; delete next.variantes; return next })
+  }
+
+  const addVariante = () => {
+    setForm((prev) => ({ ...prev, variantes: [...prev.variantes, emptyVariante()] }))
+  }
+
+  const removeVariante = (index: number) => {
+    setForm((prev) => ({ ...prev, variantes: prev.variantes.filter((_, i) => i !== index) }))
+  }
+
   const validate = () => {
     const errors: Record<string, string> = {}
     if (!form.nombre.trim()) errors.nombre = 'El nombre es requerido'
-    if (!form.precio30ml && !form.precio50ml) errors.precio30ml = 'Al menos un precio es requerido'
+    const validas = form.variantes.filter((v) => v.ml.trim() && v.precio.trim())
+    if (validas.length === 0) errors.variantes = 'Añade al menos un volumen (ml) con su precio'
     setFieldErrors(errors)
     return Object.keys(errors).length === 0
   }
@@ -113,6 +141,11 @@ export function ProductoForm({ id }: { id?: string }) {
     if (submitting || !validate()) return
     setError(null)
     setSubmitting(true)
+
+    const variantesPayload = form.variantes
+      .filter((v) => v.ml.trim() && v.precio.trim())
+      .map((v) => ({ ml: Number(v.ml), precio: Number(v.precio) }))
+      .sort((a, b) => a.ml - b.ml)
 
     const payload = {
       slug: slugify(form.nombre),
@@ -125,8 +158,7 @@ export function ProductoForm({ id }: { id?: string }) {
       descripcion_corta: form.descripcionCorta.trim(),
       descripcion_larga: form.descripcionLarga.trim(),
       imagenes: form.imagenes,
-      precio_30ml: form.precio30ml ? Number(form.precio30ml) : null,
-      precio_50ml: form.precio50ml ? Number(form.precio50ml) : null,
+      variantes: variantesPayload,
       destacado: form.destacado,
       nuevo_lanzamiento: form.nuevoLanzamiento,
       activo: form.activo,
@@ -175,28 +207,14 @@ export function ProductoForm({ id }: { id?: string }) {
                 className="w-full border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition-colors focus:border-stone-900" />
             </Field>
 
-            <div className="grid gap-5 sm:grid-cols-3">
-              <Field label="Familia olfativa" required>
-                <select value={form.familiaOlfativa} onChange={(e) => set('familiaOlfativa', e.target.value)}
-                  className="w-full border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition-colors focus:border-stone-900">
-                  {(categorias.length > 0 ? categorias : fallbackFamilias.map((f) => ({ id: f, nombre: f.charAt(0).toUpperCase() + f.slice(1) }))).map((c) => (
-                    <option key={c.id} value={c.id}>{c.nombre}</option>
-                  ))}
-                </select>
-              </Field>
-
-              <Field label="Precio 30ml (€)" error={fieldErrors.precio30ml}>
-                <input type="number" min="0" step="0.01" value={form.precio30ml} onChange={(e) => set('precio30ml', e.target.value)}
-                  placeholder="45.00"
-                  className="w-full border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition-colors focus:border-stone-900" />
-              </Field>
-
-              <Field label="Precio 50ml (€)">
-                <input type="number" min="0" step="0.01" value={form.precio50ml} onChange={(e) => set('precio50ml', e.target.value)}
-                  placeholder="68.00"
-                  className="w-full border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition-colors focus:border-stone-900" />
-              </Field>
-            </div>
+            <Field label="Familia olfativa" required>
+              <select value={form.familiaOlfativa} onChange={(e) => set('familiaOlfativa', e.target.value)}
+                className="w-full border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition-colors focus:border-stone-900">
+                {(categorias.length > 0 ? categorias : fallbackFamilias.map((f) => ({ id: f, nombre: f.charAt(0).toUpperCase() + f.slice(1) }))).map((c) => (
+                  <option key={c.id} value={c.id}>{c.nombre}</option>
+                ))}
+              </select>
+            </Field>
 
             <Field label="Descripción corta">
               <input type="text" value={form.descripcionCorta} onChange={(e) => set('descripcionCorta', e.target.value)}
@@ -209,6 +227,46 @@ export function ProductoForm({ id }: { id?: string }) {
                 placeholder="Relato completo de la fragancia…"
                 className="w-full resize-y border border-stone-200 bg-white px-4 py-3 text-sm leading-relaxed text-stone-900 outline-none transition-colors focus:border-stone-900" />
             </Field>
+          </div>
+        </Section>
+
+        {/* Volumen y precio */}
+        <Section title="Volumen y precio" hint="Añade cada presentación (ml) con su precio. Puedes cargar tantas variantes como necesites.">
+          <div className="flex flex-col gap-3">
+            {form.variantes.map((v, i) => (
+              <div key={i} className="flex items-end gap-3">
+                <Field label="ml">
+                  <input type="number" min="0" step="1" value={v.ml} onChange={(e) => setVariante(i, 'ml', e.target.value)}
+                    placeholder="5"
+                    className="w-24 border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition-colors focus:border-stone-900" />
+                </Field>
+                <Field label="Precio (€)">
+                  <input type="number" min="0" step="0.01" value={v.precio} onChange={(e) => setVariante(i, 'precio', e.target.value)}
+                    placeholder="12.00"
+                    className="w-32 border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition-colors focus:border-stone-900" />
+                </Field>
+                {form.variantes.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeVariante(i)}
+                    aria-label="Quitar variante"
+                    className="mb-[1px] flex h-[46px] w-[46px] items-center justify-center border border-stone-200 text-stone-400 transition-colors hover:border-red-300 hover:text-red-500"
+                  >
+                    <X className="size-4" />
+                  </button>
+                )}
+              </div>
+            ))}
+            {fieldErrors.variantes && <span className="text-xs text-red-600">{fieldErrors.variantes}</span>}
+
+            <button
+              type="button"
+              onClick={addVariante}
+              className="mt-1 flex w-fit items-center gap-2 border border-stone-300 px-4 py-2.5 text-[0.6rem] uppercase tracking-widest text-stone-600 transition-colors hover:border-stone-900 hover:text-stone-900"
+            >
+              <Plus className="size-3.5" />
+              Añadir variante
+            </button>
           </div>
         </Section>
 

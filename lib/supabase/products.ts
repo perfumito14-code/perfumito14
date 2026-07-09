@@ -7,7 +7,12 @@ const supabase = createClient(
 )
 
 const SELECT =
-  'id,slug,nombre,casa_perfumeria,familia_olfativa,notas_salida,notas_corazon,notas_fondo,descripcion_corta,descripcion_larga,imagenes,precio_30ml,precio_50ml,destacado,nuevo_lanzamiento,activo'
+  'id,slug,nombre,casa_perfumeria,familia_olfativa,notas_salida,notas_corazon,notas_fondo,descripcion_corta,descripcion_larga,imagenes,variantes,destacado,nuevo_lanzamiento,activo'
+
+interface VarianteRow {
+  ml: number
+  precio: number
+}
 
 interface ProductoRow {
   id: string
@@ -21,21 +26,21 @@ interface ProductoRow {
   descripcion_corta: string | null
   descripcion_larga: string | null
   imagenes: string[] | null
-  precio_30ml: number | null
-  precio_50ml: number | null
+  variantes: VarianteRow[] | null
   destacado: boolean
   nuevo_lanzamiento: boolean
   activo: boolean
 }
 
 function mapRow(row: ProductoRow): Producto {
-  const variantes = []
-  if (row.precio_30ml != null) {
-    variantes.push({ tamano: '30ml', precio: row.precio_30ml, sku: `${row.slug}-30ml` })
-  }
-  if (row.precio_50ml != null) {
-    variantes.push({ tamano: '50ml', precio: row.precio_50ml, sku: `${row.slug}-50ml` })
-  }
+  const variantes = (row.variantes ?? [])
+    .slice()
+    .sort((a, b) => a.ml - b.ml)
+    .map((v) => ({
+      tamano: `${v.ml}ml`,
+      precio: v.precio,
+      sku: `${row.slug}-${v.ml}ml`,
+    }))
 
   return {
     id: row.id,

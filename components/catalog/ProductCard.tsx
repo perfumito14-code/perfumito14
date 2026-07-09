@@ -5,17 +5,15 @@ import Link from 'next/link'
 import { Plus } from 'lucide-react'
 import type { Producto } from '@/types/product'
 import { useCarrito } from '@/lib/cartStore'
-import { formatearPrecio, precioDesde } from '@/lib/format'
+import { formatearPrecio } from '@/lib/format'
 
 export function ProductCard({ producto, index = 0 }: { producto: Producto; index?: number }) {
   const agregar = useCarrito((s) => s.agregar)
-  const desde = precioDesde(producto.variantes.map((v) => v.precio))
-  const primerVariante = producto.variantes[0]
-  const volumes = producto.variantes.map((v) => v.tamano).join(' · ')
+  const [principal, ...otras] = producto.variantes
 
   const quickAdd = (e: React.MouseEvent) => {
     e.preventDefault()
-    if (primerVariante) agregar(producto, primerVariante.tamano)
+    if (principal) agregar(producto, principal.tamano)
   }
 
   return (
@@ -40,7 +38,7 @@ export function ProductCard({ producto, index = 0 }: { producto: Producto; index
             </div>
           )}
 
-          {primerVariante && (
+          {principal && (
             <button
               type="button"
               onClick={quickAdd}
@@ -64,14 +62,23 @@ export function ProductCard({ producto, index = 0 }: { producto: Producto; index
           <p className="line-clamp-1 text-xs text-muted-foreground">
             {producto.descripcionCorta}
           </p>
-          <div className="mt-1 flex items-center justify-between">
-            <span className="text-sm font-semibold text-foreground">
-              {formatearPrecio(desde)}
-            </span>
-            <span className="text-[0.55rem] font-medium uppercase tracking-wider text-muted-foreground">
-              {volumes}
-            </span>
-          </div>
+          {principal && (
+            <div className="mt-1 flex items-center justify-between gap-2">
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-sm font-semibold text-foreground">
+                  {formatearPrecio(principal.precio)}
+                </span>
+                <span className="text-[0.55rem] font-medium uppercase tracking-wider text-muted-foreground">
+                  {principal.tamano}
+                </span>
+              </div>
+              {otras.length > 0 && (
+                <span className="truncate text-[0.6rem] text-muted-foreground">
+                  +{otras.map((v) => formatearPrecio(v.precio)).join(' · ')}
+                </span>
+              )}
+            </div>
+          )}
         </div>
       </Link>
     </article>

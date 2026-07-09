@@ -5,6 +5,11 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { ConfirmDialog } from '@/components/admin/ConfirmDialog'
 
+interface Variante {
+  ml: number
+  precio: number
+}
+
 interface ProductoRow {
   id: string
   slug: string
@@ -12,16 +17,18 @@ interface ProductoRow {
   familia_olfativa: string
   descripcion_corta: string
   imagenes: string[]
-  precio_30ml: number | null
-  precio_50ml: number | null
+  variantes: Variante[] | null
   destacado: boolean
   nuevo_lanzamiento: boolean
   activo: boolean
 }
 
-const fmt = (n: number | null) =>
-  n != null
-    ? new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }).format(n)
+const fmt = (n: number) =>
+  new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }).format(n)
+
+const variantesTexto = (variantes: Variante[] | null) =>
+  variantes && variantes.length > 0
+    ? [...variantes].sort((a, b) => a.ml - b.ml).map((v) => `${v.ml}ml ${fmt(v.precio)}`).join(' · ')
     : '—'
 
 const FAMILIAS = ['citrico', 'amaderado', 'floral', 'oriental', 'acuatico', 'gourmand']
@@ -40,7 +47,7 @@ export default function AdminProductosPage() {
     const supabase = createClient()
     let q = supabase
       .from('productos')
-      .select('id,slug,nombre,familia_olfativa,descripcion_corta,imagenes,precio_30ml,precio_50ml,destacado,nuevo_lanzamiento,activo')
+      .select('id,slug,nombre,familia_olfativa,descripcion_corta,imagenes,variantes,destacado,nuevo_lanzamiento,activo')
       .order('created_at', { ascending: false })
     if (familia) q = q.eq('familia_olfativa', familia)
     if (busqueda) q = q.or(`nombre.ilike.%${busqueda}%,descripcion_corta.ilike.%${busqueda}%`)
@@ -161,7 +168,7 @@ export default function AdminProductosPage() {
                   <div>
                     <p className="truncate font-serif text-base text-stone-900">{p.nombre}</p>
                     <p className="text-xs capitalize text-stone-400">{p.familia_olfativa}</p>
-                    <p className="mt-0.5 text-xs text-stone-500">{fmt(p.precio_30ml)} / {fmt(p.precio_50ml)}</p>
+                    <p className="mt-0.5 text-xs text-stone-500">{variantesTexto(p.variantes)}</p>
                   </div>
                   <div className="mt-2 flex flex-wrap gap-2">
                     <Toggle label="Dest" active={p.destacado} onClick={() => handleToggle(p, 'destacado')} />
@@ -186,9 +193,16 @@ export default function AdminProductosPage() {
                   <p className="mt-0.5 truncate text-xs text-stone-400">{p.descripcion_corta}</p>
                 </div>
                 <span className="text-sm capitalize text-stone-500">{p.familia_olfativa}</span>
-                <div>
-                  <p className="text-sm text-stone-900">{fmt(p.precio_30ml)} <span className="text-xs text-stone-400">30ml</span></p>
-                  <p className="text-sm text-stone-900">{fmt(p.precio_50ml)} <span className="text-xs text-stone-400">50ml</span></p>
+                <div className="flex flex-col gap-0.5">
+                  {p.variantes && p.variantes.length > 0 ? (
+                    [...p.variantes].sort((a, b) => a.ml - b.ml).map((v) => (
+                      <p key={v.ml} className="text-sm text-stone-900">
+                        {fmt(v.precio)} <span className="text-xs text-stone-400">{v.ml}ml</span>
+                      </p>
+                    ))
+                  ) : (
+                    <p className="text-sm text-stone-400">—</p>
+                  )}
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   <Toggle label="Dest" active={p.destacado} onClick={() => handleToggle(p, 'destacado')} />
