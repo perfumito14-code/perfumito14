@@ -1,11 +1,12 @@
 import type { MetadataRoute } from 'next'
-import { productos } from '@/data/products'
+import { getAllSlugs } from '@/lib/supabase/products'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://perfumito14.vercel.app'
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const productosEntries = productos.map((p) => ({
-    url: `${BASE_URL}/producto/${p.slug}`,
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const slugs = await getAllSlugs()
+  const productosEntries = slugs.map((slug) => ({
+    url: `${BASE_URL}/producto/${slug}`,
     lastModified: new Date(),
     changeFrequency: 'monthly' as const,
     priority: 0.8,

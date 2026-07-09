@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { productos } from '@/data/products'
+import { getProductos } from '@/lib/supabase/products'
 import { CatalogView } from '@/components/catalog/CatalogView'
 
 export const metadata: Metadata = {
@@ -8,7 +8,9 @@ export const metadata: Metadata = {
     'Descubre toda la colección de perfumes italianos premium perfumito14. Filtra por familia olfativa y formato (30ml / 50ml).',
 }
 
-export default function CatalogoPage() {
+export default async function CatalogoPage() {
+  const productos = await getProductos()
+
   return (
     <>
       <section className="border-b border-border bg-secondary/40 pt-28 md:pt-36">

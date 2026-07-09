@@ -3,17 +3,18 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ChevronRight } from 'lucide-react'
 import {
+  getAllSlugs,
   getProductoPorSlug,
   getRelacionados,
-  productos,
-} from '@/data/products'
+} from '@/lib/supabase/products'
 import { ProductGallery } from '@/components/product/ProductGallery'
 import { ProductInfo } from '@/components/product/ProductInfo'
 import { ScentPyramid } from '@/components/product/ScentPyramid'
 import { ProductCard } from '@/components/catalog/ProductCard'
 
-export function generateStaticParams() {
-  return productos.map((p) => ({ slug: p.slug }))
+export async function generateStaticParams() {
+  const slugs = await getAllSlugs()
+  return slugs.map((slug) => ({ slug }))
 }
 
 export async function generateMetadata({
@@ -22,7 +23,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const producto = getProductoPorSlug(slug)
+  const producto = await getProductoPorSlug(slug)
   if (!producto) return { title: 'Producto no encontrado' }
   return {
     title: producto.nombre,
@@ -41,10 +42,10 @@ export default async function ProductoPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const producto = getProductoPorSlug(slug)
+  const producto = await getProductoPorSlug(slug)
   if (!producto) notFound()
 
-  const relacionados = getRelacionados(producto)
+  const relacionados = await getRelacionados(producto)
 
   return (
     <>

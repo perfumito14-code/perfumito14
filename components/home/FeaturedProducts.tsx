@@ -1,11 +1,11 @@
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { getProductosDestacados } from '@/data/products'
+import { getProductosDestacados } from '@/lib/supabase/products'
 import { ProductCard } from '@/components/catalog/ProductCard'
 import { Reveal } from '@/components/ui/reveal'
 
-export function FeaturedProducts() {
-  const destacados = getProductosDestacados().slice(0, 4)
+export async function FeaturedProducts() {
+  const destacados = (await getProductosDestacados()).slice(0, 4)
 
   return (
     <section className="bg-secondary/30 py-20 md:py-28">
