@@ -76,17 +76,6 @@ export async function getProductoPorSlug(slug: string): Promise<Producto | undef
   return mapRow(data)
 }
 
-export async function getProductosDestacados(): Promise<Producto[]> {
-  const { data, error } = await supabase
-    .from('productos')
-    .select(SELECT)
-    .eq('activo', true)
-    .eq('destacado', true)
-    .order('created_at', { ascending: false })
-  if (error || !data) return []
-  return data.map(mapRow)
-}
-
 export async function getRelacionados(producto: Producto, limite = 3): Promise<Producto[]> {
   const { data, error } = await supabase
     .from('productos')

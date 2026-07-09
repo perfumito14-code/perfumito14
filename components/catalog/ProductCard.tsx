@@ -66,7 +66,7 @@ export function ProductCard({ producto, index = 0 }: { producto: Producto; index
           </p>
           <div className="mt-1 flex items-center justify-between">
             <span className="text-sm font-semibold text-foreground">
-              desde {formatearPrecio(desde)}
+              {formatearPrecio(desde)}
             </span>
             <span className="text-[0.55rem] font-medium uppercase tracking-wider text-muted-foreground">
               {volumes}
