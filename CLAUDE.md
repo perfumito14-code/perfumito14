@@ -26,23 +26,39 @@ aún no instalado/logueado en el entorno del usuario a fecha 2026-07-09.
 - Precio de card sin prefijo "desde", precio directo.
 - Home reordenado: Hero, BrandStory, banner (UrgencyTicker), "Más
   vendidos" (galería real, max 6, CTA "Ingresar a galería" → /catalogo),
-  Comprar en 3 pasos, **nuevo** carrusel horizontal "Fragancias
-  destacadas" (`components/home/FeaturedCarousel.tsx` +
-  `CarouselTrack.tsx`, productos con `destacado=true`), Testimonios.
-  Newsletter eliminado.
-- **Volúmenes de producto → variantes libres.** Migración de Supabase
-  `add_variantes_column`: se agregó columna `productos.variantes`
-  (jsonb, `[{ "ml": number, "precio": number }]`), migrando los datos
-  que ya estaban en `precio_30ml`/`precio_50ml` (columnas viejas se
-  mantienen sin usar, no se borraron todavía). `ProductoForm.tsx`
-  ahora tiene una lista dinámica de variantes (input ml + precio, botón
-  "+ Añadir variante", botón quitar por fila) en vez de los campos fijos
-  `precio30ml`/`precio50ml`. Volúmenes de referencia del cliente: 5, 7
-  y 15 ml (no son un enum fijo en el código, el input es libre).
-  `lib/supabase/products.ts` lee `variantes` y ordena por ml ascendente.
+  Comprar en 3 pasos, carrusel horizontal "Fragancias destacadas"
+  (`components/home/FeaturedCarousel.tsx` + `CarouselTrack.tsx`,
+  productos con `destacado=true`), Testimonios. Newsletter eliminado.
+- **Volúmenes de producto → variantes libres.** Columna
+  `productos.variantes` (jsonb, `[{ "ml", "precio", "stock" }]`).
+  `ProductoForm.tsx` tiene lista dinámica de variantes (ml + precio +
+  stock, botón "+ Añadir variante"). Volúmenes de referencia del
+  cliente: 5, 7 y 15 ml (input libre, no es un enum fijo).
   `ProductCard.tsx` muestra el precio de la variante más chica como
-  principal y el resto de precios al lado (ej. "12,00 € 5ML  +18,00 € ·
-  25,00 €") cuando hay más de una variante.
+  principal y el resto al lado cuando hay más de una.
+- **Hero rediseñado**: imagen a la izquierda, texto a la derecha
+  (`components/home/Hero.tsx`). Navbar (`components/layout/Header.tsx`)
+  ahora siempre sólido (antes transparente hasta hacer scroll) y sigue
+  `fixed` (ya lo era).
+- **Stock por variante + pedidos.** Migración `add_stock_and_pedidos`:
+  - `productos.variantes[].stock` (unidades disponibles por ml).
+  - Tabla `pedidos` (items jsonb, subtotal, status, stock_descontado,
+    created_at) con RLS: insert público (el checkout es anónimo),
+    gestión (select/update/delete) solo `authenticated` (mismo patrón
+    que `productos`).
+  - Trigger `trg_descontar_stock_pedido` (BEFORE UPDATE en `pedidos`):
+    cuando `status` pasa a `pagado` o `enviado` y `stock_descontado`
+    todavía es `false`, descuenta automáticamente el stock de cada
+    variante según `items` y marca `stock_descontado = true` (idempotente,
+    probado manualmente: no descuenta dos veces al pasar pagado→enviado).
+  - Web pública: `ProductCard`/`ProductInfo` muestran "Agotado" y
+    deshabilitan compra cuando una variante llega a 0 stock.
+  - `WhatsAppCheckoutButton.tsx`: al confirmar, además de abrir
+    WhatsApp, inserta el pedido en la tabla `pedidos` (antes no se
+    persistía nada).
+  - Nueva sección `/admin/pedidos`: lista pedidos con selector de
+    status (pendiente/confirmado/pagado/enviado/entregado/cancelado).
+  - Admin: listado de productos muestra stock junto a cada precio.
 
 ## Pendiente
 
@@ -52,31 +68,25 @@ aún no instalado/logueado en el entorno del usuario a fecha 2026-07-09.
 2. **Preloader más largo.** Candidatos: `app/catalogo/loading.tsx` y
    `app/producto/[slug]/loading.tsx`. No identificado aún el
    componente/timeout exacto.
-3. **Hero: rediseño** (pedido 2026-07-10, solo a analizar/planificar
-   todavía, no implementado). Layout deseado: imagen a la izquierda,
-   texto a la derecha; navbar superior sólido desde el inicio (hoy
-   probablemente transparente sobre el hero) y que se mantenga sólido
-   al hacer scroll (sticky). Revisar `components/home/Hero.tsx` y el
-   navbar (`components/layout/`).
-4. **Stock por variante** (pedido 2026-07-10, solo a analizar). El
-   cliente quiere indicar stock por variante/ml en el admin. Falta
-   definir: ¿se muestra públicamente en la web (ej. "agotado")? ¿se
-   descuenta automático? (la tienda no tiene checkout online, los
-   pedidos se confirman por WhatsApp, así que "descontar stock" no
-   tiene un trigger de compra real — probablemente sea manual desde
-   admin). Definir esto con el cliente antes de tocar schema otra vez.
-5. **Marca y nombre del perfume en admin** (pedido 2026-07-10, a
-   analizar). Ya existen `nombre` y `casa_perfumeria` en
-   `ProductoForm.tsx`, pero el campo "Casa / Inspiración" está pensado
-   como texto libre tipo "Inspirado en las noches de Venecia", no como
-   un campo de marca estricto. Confirmar con el cliente si quiere un
-   campo "Marca" separado y más literal (ej. "Dior") antes de tocar.
-6. **Mantener este archivo actualizado** como fuente de verdad del
-   estado del proyecto, accesible desde cualquier terminal/codespace
-   sin depender de la memoria de la conversación (pedido explícito del
-   cliente el 2026-07-09).
+3. **Marca y nombre del perfume en admin** (pedido 2026-07-10, sin
+   confirmar todavía). Ya existen `nombre` y `casa_perfumeria` en
+   `ProductoForm.tsx`, pero "Casa / Inspiración" está pensado como
+   texto libre tipo "Inspirado en las noches de Venecia", no como un
+   campo de marca estricto. Confirmar con el cliente si quiere un
+   campo "Marca" separado y literal (ej. "Dior") antes de tocar.
+4. **Mantener este archivo actualizado** como fuente de verdad del
+   estado del proyecto (pedido explícito del cliente el 2026-07-09).
 
-## Próxima sesión
-Antes de tocar Hero o stock, confirmar con el cliente los puntos 3-5
-(son ideas a analizar, no specs cerradas todavía). Los puntos 1 y 2
-son más directos y se pueden implementar sin más aclaraciones.
+## Notas de implementación (pedidos/stock)
+
+- El campo `ml` en `pedidos.items` se calcula en el checkout parseando
+  `tamano` (ej. "5ml" → 5) — si en algún momento se permiten unidades
+  no-ml en `tamano`, hay que revisar `WhatsAppCheckoutButton.tsx`.
+- El trigger solo actúa en UPDATE, no en INSERT — si algún día se
+  insertan pedidos ya con status `pagado`/`enviado` directamente, no
+  descontará stock (no es el flujo actual, que siempre inserta en
+  `pendiente`).
+- No hay reserva de stock al agregar al carrito (solo se valida/
+  descuenta al confirmar el pago) — dos clientes pueden agregar el
+  último ítem en simultáneo; el `greatest(0, ...)` en el trigger evita
+  que el stock quede negativo pero no evita la sobreventa en sí.
