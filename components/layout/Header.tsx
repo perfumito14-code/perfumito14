@@ -1,11 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Menu, ShoppingBag, X } from 'lucide-react'
 import { useCarrito } from '@/lib/cartStore'
-import { cn } from '@/lib/utils'
 
 const NAV = [
   { href: '/', label: 'Inicio' },
@@ -17,25 +16,10 @@ const NAV = [
 export function Header() {
   const abrir = useCarrito((s) => s.abrir)
   const unidades = useCarrito((s) => s.items.reduce((a, i) => a + i.cantidad, 0))
-  const [scrolled, setScrolled] = useState(false)
   const [menuMovil, setMenuMovil] = useState(false)
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 16)
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
   return (
-    <header
-      className={cn(
-        'fixed inset-x-0 top-0 z-50 transition-all duration-500',
-        scrolled
-          ? 'border-b border-border/70 bg-background/85 backdrop-blur-md'
-          : 'border-b border-transparent bg-transparent',
-      )}
-    >
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-border/70 bg-background/95 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-5 md:h-20 md:px-8">
         {/* Navegación izquierda (desktop) */}
         <nav className="hidden flex-1 items-center gap-8 md:flex">
