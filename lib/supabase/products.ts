@@ -12,6 +12,7 @@ const SELECT =
 interface VarianteRow {
   ml: number
   precio: number
+  stock: number
 }
 
 interface ProductoRow {
@@ -40,6 +41,7 @@ function mapRow(row: ProductoRow): Producto {
       tamano: `${v.ml}ml`,
       precio: v.precio,
       sku: `${row.slug}-${v.ml}ml`,
+      stock: v.stock ?? 0,
     }))
 
   return {

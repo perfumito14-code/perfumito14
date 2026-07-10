@@ -8,6 +8,7 @@ import { ConfirmDialog } from '@/components/admin/ConfirmDialog'
 interface Variante {
   ml: number
   precio: number
+  stock: number
 }
 
 interface ProductoRow {
@@ -28,7 +29,7 @@ const fmt = (n: number) =>
 
 const variantesTexto = (variantes: Variante[] | null) =>
   variantes && variantes.length > 0
-    ? [...variantes].sort((a, b) => a.ml - b.ml).map((v) => `${v.ml}ml ${fmt(v.precio)}`).join(' · ')
+    ? [...variantes].sort((a, b) => a.ml - b.ml).map((v) => `${v.ml}ml ${fmt(v.precio)} (${v.stock} uds)`).join(' · ')
     : '—'
 
 const FAMILIAS = ['citrico', 'amaderado', 'floral', 'oriental', 'acuatico', 'gourmand']
@@ -183,7 +184,7 @@ export default function AdminProductosPage() {
               {/* Desktop row */}
               <div
                 className="hidden md:grid md:items-center"
-                style={{ gridTemplateColumns: '5rem 1fr 9rem 11rem 9rem 7rem', padding: '1.25rem', gap: '1rem' }}
+                style={{ gridTemplateColumns: '5rem 1fr 9rem 13rem 9rem 7rem', padding: '1.25rem', gap: '1rem' }}
               >
                 <div className="h-16 w-12 overflow-hidden bg-stone-100">
                   {p.imagenes?.[0] && <img src={p.imagenes[0]} alt={p.nombre} className="h-full w-full object-cover" loading="lazy" />}
@@ -197,7 +198,10 @@ export default function AdminProductosPage() {
                   {p.variantes && p.variantes.length > 0 ? (
                     [...p.variantes].sort((a, b) => a.ml - b.ml).map((v) => (
                       <p key={v.ml} className="text-sm text-stone-900">
-                        {fmt(v.precio)} <span className="text-xs text-stone-400">{v.ml}ml</span>
+                        {fmt(v.precio)} <span className="text-xs text-stone-400">{v.ml}ml</span>{' '}
+                        <span className={`text-xs ${v.stock > 0 ? 'text-stone-400' : 'text-red-500'}`}>
+                          · {v.stock > 0 ? `${v.stock} uds` : 'agotado'}
+                        </span>
                       </p>
                     ))
                   ) : (

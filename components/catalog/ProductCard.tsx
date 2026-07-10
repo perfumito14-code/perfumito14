@@ -9,11 +9,13 @@ import { formatearPrecio } from '@/lib/format'
 
 export function ProductCard({ producto, index = 0 }: { producto: Producto; index?: number }) {
   const agregar = useCarrito((s) => s.agregar)
-  const [principal, ...otras] = producto.variantes
+  const disponibles = producto.variantes.filter((v) => v.stock > 0)
+  const agotado = disponibles.length === 0
+  const [principal, ...otras] = agotado ? producto.variantes : disponibles
 
   const quickAdd = (e: React.MouseEvent) => {
     e.preventDefault()
-    if (principal) agregar(producto, principal.tamano)
+    if (principal && !agotado) agregar(producto, principal.tamano)
   }
 
   return (
@@ -25,20 +27,28 @@ export function ProductCard({ producto, index = 0 }: { producto: Producto; index
             alt={producto.nombre}
             fill
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-            className="object-cover transition-all duration-500 group-hover:scale-105"
+            className={`object-cover transition-all duration-500 group-hover:scale-105 ${agotado ? 'opacity-60 grayscale' : ''}`}
           />
 
-          {producto.nuevoLanzamiento && (
-            <div className="absolute left-0 top-4 px-3 py-1"
-              style={{ background: '#dc70af' }}
-            >
+          {agotado ? (
+            <div className="absolute left-0 top-4 bg-foreground/80 px-3 py-1">
               <span className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-white">
-                ★ nuevo
+                Agotado
               </span>
             </div>
+          ) : (
+            producto.nuevoLanzamiento && (
+              <div className="absolute left-0 top-4 px-3 py-1"
+                style={{ background: '#dc70af' }}
+              >
+                <span className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-white">
+                  ★ nuevo
+                </span>
+              </div>
+            )
           )}
 
-          {principal && (
+          {principal && !agotado && (
             <button
               type="button"
               onClick={quickAdd}
@@ -64,15 +74,21 @@ export function ProductCard({ producto, index = 0 }: { producto: Producto; index
           </p>
           {principal && (
             <div className="mt-1 flex items-center justify-between gap-2">
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-sm font-semibold text-foreground">
-                  {formatearPrecio(principal.precio)}
+              {agotado ? (
+                <span className="text-sm font-semibold text-muted-foreground">
+                  Agotado
                 </span>
-                <span className="text-[0.55rem] font-medium uppercase tracking-wider text-muted-foreground">
-                  {principal.tamano}
-                </span>
-              </div>
-              {otras.length > 0 && (
+              ) : (
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-sm font-semibold text-foreground">
+                    {formatearPrecio(principal.precio)}
+                  </span>
+                  <span className="text-[0.55rem] font-medium uppercase tracking-wider text-muted-foreground">
+                    {principal.tamano}
+                  </span>
+                </div>
+              )}
+              {!agotado && otras.length > 0 && (
                 <span className="truncate text-[0.6rem] text-muted-foreground">
                   +{otras.map((v) => formatearPrecio(v.precio)).join(' · ')}
                 </span>

@@ -1,18 +1,21 @@
 'use client'
 
 import { useState } from 'react'
-import type { Producto, Tamano } from '@/types/product'
+import type { Producto } from '@/types/product'
 import { LABEL_FAMILIA } from '@/types/product'
 import { formatearPrecio } from '@/lib/format'
 import { AddToCartButton } from '@/components/product/AddToCartButton'
 import { cn } from '@/lib/utils'
 
 export function ProductInfo({ producto }: { producto: Producto }) {
+  const primeraDisponible = producto.variantes.find((v) => v.stock > 0)
   const [tamano, setTamano] = useState<string>(
-    producto.variantes[0]?.tamano ?? '',
+    (primeraDisponible ?? producto.variantes[0])?.tamano ?? '',
   )
   const variante =
     producto.variantes.find((v) => v.tamano === tamano) ?? producto.variantes[0]
+  const agotado = !variante || variante.stock <= 0
+  const sinStockTotal = producto.variantes.every((v) => v.stock <= 0)
 
   return (
     <div className="flex flex-col">
@@ -38,43 +41,57 @@ export function ProductInfo({ producto }: { producto: Producto }) {
         <span className="text-xs font-medium uppercase tracking-[0.18em] text-foreground">
           Formato
         </span>
-        <div className="mt-3 flex gap-3">
-          {producto.variantes.map((v) => (
-            <button
-              key={v.sku}
-              type="button"
-              onClick={() => setTamano(v.tamano)}
-              aria-pressed={tamano === v.tamano}
-              className={cn(
-                'flex flex-col items-start rounded-sm border px-5 py-3 transition-colors',
-                tamano === v.tamano
-                  ? 'border-primary bg-primary/5'
-                  : 'border-border hover:border-primary/50',
-              )}
-            >
-              <span className="text-sm font-medium text-foreground">
-                {v.tamano}
-              </span>
-              <span className="text-sm text-muted-foreground">
-                {formatearPrecio(v.precio)}
-              </span>
-            </button>
-          ))}
+        <div className="mt-3 flex flex-wrap gap-3">
+          {producto.variantes.map((v) => {
+            const disabled = v.stock <= 0
+            return (
+              <button
+                key={v.sku}
+                type="button"
+                onClick={() => !disabled && setTamano(v.tamano)}
+                disabled={disabled}
+                aria-pressed={tamano === v.tamano}
+                className={cn(
+                  'flex flex-col items-start rounded-sm border px-5 py-3 transition-colors',
+                  disabled
+                    ? 'cursor-not-allowed border-border/60 opacity-50'
+                    : tamano === v.tamano
+                      ? 'border-primary bg-primary/5'
+                      : 'border-border hover:border-primary/50',
+                )}
+              >
+                <span className="text-sm font-medium text-foreground">
+                  {v.tamano}
+                </span>
+                <span className="text-sm text-muted-foreground">
+                  {disabled ? 'Agotado' : formatearPrecio(v.precio)}
+                </span>
+              </button>
+            )
+          })}
         </div>
       </div>
 
       {/* Precio + CTA */}
-      <div className="mt-9 flex items-baseline gap-3">
-        <span className="font-serif text-3xl text-foreground">
-          {formatearPrecio(variante.precio)}
-        </span>
-        <span className="text-sm text-muted-foreground">
-          / {variante.tamano} · IVA incluido
-        </span>
-      </div>
+      {variante && (
+        <div className="mt-9 flex items-baseline gap-3">
+          <span className="font-serif text-3xl text-foreground">
+            {formatearPrecio(variante.precio)}
+          </span>
+          <span className="text-sm text-muted-foreground">
+            / {variante.tamano} · IVA incluido
+          </span>
+        </div>
+      )}
 
       <div className="mt-6">
-        <AddToCartButton producto={producto} tamano={tamano} />
+        {sinStockTotal ? (
+          <div className="w-full rounded-sm border border-border bg-secondary/40 px-8 py-4 text-center text-sm font-medium uppercase tracking-[0.16em] text-muted-foreground">
+            Agotado
+          </div>
+        ) : (
+          <AddToCartButton producto={producto} tamano={tamano} disabled={agotado} />
+        )}
         <p className="mt-4 text-center text-xs leading-relaxed text-muted-foreground">
           Tu pedido se confirma de forma personal por WhatsApp. Sin pagos online
           en este paso.

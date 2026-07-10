@@ -12,6 +12,7 @@ export interface Variante {
   tamano: Tamano
   precio: number // en euros
   sku: string
+  stock: number
 }
 
 export interface Producto {

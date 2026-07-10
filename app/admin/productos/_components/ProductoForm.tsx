@@ -13,6 +13,7 @@ interface Categoria { id: string; nombre: string }
 interface VarianteForm {
   ml: string
   precio: string
+  stock: string
 }
 
 interface FormData {
@@ -34,7 +35,7 @@ interface FormData {
 const slugify = (str: string) =>
   str.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 
-const emptyVariante = (): VarianteForm => ({ ml: '', precio: '' })
+const emptyVariante = (): VarianteForm => ({ ml: '', precio: '', stock: '' })
 
 const emptyForm = (): FormData => ({
   nombre: '',
@@ -81,7 +82,7 @@ export function ProductoForm({ id }: { id?: string }) {
       .single()
       .then(({ data, error: err }) => {
         if (err || !data) { setError('No se pudo cargar el producto.'); setLoading(false); return }
-        const variantes: { ml: number; precio: number }[] = data.variantes ?? []
+        const variantes: { ml: number; precio: number; stock: number }[] = data.variantes ?? []
         setForm({
           nombre: data.nombre ?? '',
           casaPerfumeria: data.casa_perfumeria ?? '',
@@ -96,7 +97,7 @@ export function ProductoForm({ id }: { id?: string }) {
             ? variantes
                 .slice()
                 .sort((a, b) => a.ml - b.ml)
-                .map((v) => ({ ml: String(v.ml), precio: String(v.precio) }))
+                .map((v) => ({ ml: String(v.ml), precio: String(v.precio), stock: String(v.stock ?? 0) }))
             : [emptyVariante()],
           destacado: !!data.destacado,
           nuevoLanzamiento: !!data.nuevo_lanzamiento,
@@ -144,7 +145,7 @@ export function ProductoForm({ id }: { id?: string }) {
 
     const variantesPayload = form.variantes
       .filter((v) => v.ml.trim() && v.precio.trim())
-      .map((v) => ({ ml: Number(v.ml), precio: Number(v.precio) }))
+      .map((v) => ({ ml: Number(v.ml), precio: Number(v.precio), stock: v.stock.trim() ? Number(v.stock) : 0 }))
       .sort((a, b) => a.ml - b.ml)
 
     const payload = {
@@ -231,7 +232,7 @@ export function ProductoForm({ id }: { id?: string }) {
         </Section>
 
         {/* Volumen y precio */}
-        <Section title="Volumen y precio" hint="Añade cada presentación (ml) con su precio. Puedes cargar tantas variantes como necesites.">
+        <Section title="Volumen, precio y stock" hint="Añade cada presentación (ml) con su precio y unidades disponibles. Si el stock llega a 0, esa variante se muestra como agotada en la web.">
           <div className="flex flex-col gap-3">
             {form.variantes.map((v, i) => (
               <div key={i} className="flex items-end gap-3">
@@ -244,6 +245,11 @@ export function ProductoForm({ id }: { id?: string }) {
                   <input type="number" min="0" step="0.01" value={v.precio} onChange={(e) => setVariante(i, 'precio', e.target.value)}
                     placeholder="12.00"
                     className="w-32 border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition-colors focus:border-stone-900" />
+                </Field>
+                <Field label="Stock">
+                  <input type="number" min="0" step="1" value={v.stock} onChange={(e) => setVariante(i, 'stock', e.target.value)}
+                    placeholder="10"
+                    className="w-24 border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition-colors focus:border-stone-900" />
                 </Field>
                 {form.variantes.length > 1 && (
                   <button
