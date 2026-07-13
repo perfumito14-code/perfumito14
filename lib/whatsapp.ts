@@ -11,12 +11,20 @@ import { formatearPrecio } from '@/lib/format'
 export const WHATSAPP_NUMERO =
   process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '34637746490'
 
+export interface DatosCliente {
+  nombre: string
+  telefono: string
+  direccion: string
+  email: string
+}
+
 /**
  * Construye el texto del pedido, ya formateado y legible.
  */
 export function construirMensajePedido(
   items: ItemCarrito[],
   total: number,
+  cliente: DatosCliente,
 ): string {
   const lineas = items.map((i) => {
     const subtotalLinea = i.precioUnitario * i.cantidad
@@ -32,8 +40,10 @@ export function construirMensajePedido(
     '',
     `Total: ${formatearPrecio(total)}`,
     '',
-    'Mi nombre es:',
-    'Mi dirección de envío es:',
+    `Mi nombre es: ${cliente.nombre}`,
+    `Mi teléfono es: ${cliente.telefono}`,
+    `Mi dirección de envío es: ${cliente.direccion}`,
+    ...(cliente.email ? [`Mi correo es: ${cliente.email}`] : []),
   ].join('\n')
 }
 
@@ -43,7 +53,8 @@ export function construirMensajePedido(
 export function generarUrlWhatsApp(
   items: ItemCarrito[],
   total: number,
+  cliente: DatosCliente,
 ): string {
-  const mensaje = construirMensajePedido(items, total)
+  const mensaje = construirMensajePedido(items, total, cliente)
   return `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(mensaje)}`
 }

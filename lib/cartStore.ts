@@ -1,9 +1,24 @@
 import { create } from 'zustand'
 import type { ItemCarrito, Producto, Tamano } from '@/types/product'
 
+export interface DatosCliente {
+  nombre: string
+  telefono: string
+  direccion: string
+  email: string
+}
+
+const clienteVacio: DatosCliente = {
+  nombre: '',
+  telefono: '',
+  direccion: '',
+  email: '',
+}
+
 interface EstadoCarrito {
   items: ItemCarrito[]
   abierto: boolean
+  cliente: DatosCliente
   // acciones
   abrir: () => void
   cerrar: () => void
@@ -12,6 +27,7 @@ interface EstadoCarrito {
   eliminar: (sku: string) => void
   cambiarCantidad: (sku: string, cantidad: number) => void
   vaciar: () => void
+  setCliente: (patch: Partial<DatosCliente>) => void
   // selectores derivados
   totalUnidades: () => number
   subtotal: () => number
@@ -26,6 +42,7 @@ interface EstadoCarrito {
 export const useCarrito = create<EstadoCarrito>((set, get) => ({
   items: [],
   abierto: false,
+  cliente: clienteVacio,
 
   abrir: () => set({ abierto: true }),
   cerrar: () => set({ abierto: false }),
@@ -77,6 +94,9 @@ export const useCarrito = create<EstadoCarrito>((set, get) => ({
     })),
 
   vaciar: () => set({ items: [] }),
+
+  setCliente: (patch) =>
+    set((estado) => ({ cliente: { ...estado.cliente, ...patch } })),
 
   totalUnidades: () =>
     get().items.reduce((acc, i) => acc + i.cantidad, 0),

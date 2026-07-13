@@ -14,6 +14,8 @@ export function CartDrawer() {
   const cerrar = useCarrito((s) => s.cerrar)
   const items = useCarrito((s) => s.items)
   const subtotal = useCarrito((s) => s.subtotal())
+  const cliente = useCarrito((s) => s.cliente)
+  const setCliente = useCarrito((s) => s.setCliente)
 
   // Bloquea el scroll del body mientras el drawer está abierto.
   useEffect(() => {
@@ -85,6 +87,41 @@ export function CartDrawer() {
                   {items.map((item) => (
                     <CartItem key={item.sku} item={item} />
                   ))}
+
+                  {/* Datos del cliente */}
+                  <div className="flex flex-col gap-3 py-6">
+                    <span className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
+                      Tus datos para el envío
+                    </span>
+                    <input
+                      type="text"
+                      value={cliente.nombre}
+                      onChange={(e) => setCliente({ nombre: e.target.value })}
+                      placeholder="Nombre y apellido"
+                      className="border-b border-border bg-transparent py-2 text-sm text-foreground outline-none transition-colors focus:border-primary"
+                    />
+                    <input
+                      type="tel"
+                      value={cliente.telefono}
+                      onChange={(e) => setCliente({ telefono: e.target.value })}
+                      placeholder="Teléfono"
+                      className="border-b border-border bg-transparent py-2 text-sm text-foreground outline-none transition-colors focus:border-primary"
+                    />
+                    <input
+                      type="text"
+                      value={cliente.direccion}
+                      onChange={(e) => setCliente({ direccion: e.target.value })}
+                      placeholder="Dirección de envío"
+                      className="border-b border-border bg-transparent py-2 text-sm text-foreground outline-none transition-colors focus:border-primary"
+                    />
+                    <input
+                      type="email"
+                      value={cliente.email}
+                      onChange={(e) => setCliente({ email: e.target.value })}
+                      placeholder="Correo (opcional)"
+                      className="border-b border-border bg-transparent py-2 text-sm text-foreground outline-none transition-colors focus:border-primary"
+                    />
+                  </div>
                 </div>
 
                 {/* Pie con total y CTA */}
