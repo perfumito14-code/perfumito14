@@ -1,6 +1,6 @@
 import { createClient } from './client'
 
-const BUCKET = 'products'
+const BUCKET = 'productos'
 
 export async function uploadImage(file: File) {
   const supabase = createClient()
@@ -18,6 +18,26 @@ export async function uploadImage(file: File) {
 }
 
 export async function deleteImage(path: string) {
+  const supabase = createClient()
+  const { error } = await supabase.storage.from(BUCKET).remove([path])
+  return { error: error?.message ?? null }
+}
+
+export async function uploadModel(file: File) {
+  const supabase = createClient()
+  const path = `model-${crypto.randomUUID()}.glb`
+
+  const { error: uploadErr } = await supabase.storage
+    .from(BUCKET)
+    .upload(path, file, { cacheControl: '31536000', upsert: false })
+
+  if (uploadErr) return { url: null, path: null, error: uploadErr.message }
+
+  const { data } = supabase.storage.from(BUCKET).getPublicUrl(path)
+  return { url: data.publicUrl, path, error: null }
+}
+
+export async function deleteModel(path: string) {
   const supabase = createClient()
   const { error } = await supabase.storage.from(BUCKET).remove([path])
   return { error: error?.message ?? null }

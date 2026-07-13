@@ -13,10 +13,17 @@ const HERO_PLACEHOLDER = '/images/hero.png'
 export function Hero() {
   const abrirCarrito = useCarrito((s) => s.abrir)
   const [heroSrc, setHeroSrc] = useState<string | null>(null)
+  const [modelSrc, setModelSrc] = useState<string | null>(null)
 
   useEffect(() => {
     fetchSetting('hero_image').then(({ data }) => {
       if (data?.url) setHeroSrc(data.url)
+    })
+    fetchSetting('hero_model').then(({ data }) => {
+      if (data?.url) {
+        import('@google/model-viewer')
+        setModelSrc(data.url)
+      }
     })
   }, [])
 
@@ -29,16 +36,27 @@ export function Hero() {
           initial={{ opacity: 0, scale: 1.03 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          className="relative aspect-[4/5] w-full overflow-hidden rounded-sm"
+          className="relative aspect-[4/5] w-full overflow-hidden rounded-sm bg-secondary"
         >
-          <Image
-            src={src}
-            alt="perfumito14"
-            fill
-            priority
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-cover"
-          />
+          {modelSrc ? (
+            <model-viewer
+              src={modelSrc}
+              alt="perfumito14"
+              auto-rotate
+              camera-controls
+              shadow-intensity="1"
+              style={{ width: '100%', height: '100%' }}
+            />
+          ) : (
+            <Image
+              src={src}
+              alt="perfumito14"
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
+            />
+          )}
         </motion.div>
 
         <div className="flex flex-col">

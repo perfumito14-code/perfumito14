@@ -5,6 +5,7 @@ import './globals.css'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { CartDrawer } from '@/components/cart/CartDrawer'
+import { Preloader } from '@/components/ui/Preloader'
 
 const playfair = Playfair_Display({
   variable: '--font-playfair',
@@ -58,6 +59,7 @@ export default function RootLayout({
       className={`${playfair.variable} ${inter.variable} bg-background`}
     >
       <body className="font-sans antialiased">
+        <Preloader />
         <Header />
         <main>{children}</main>
         <Footer />
